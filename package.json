@@ -1,0 +1,23 @@
+{
+  "name": "nuevo",
+  "version": "0.0.1",
+  "description": "Bases con Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doblefilmina/Nuevo.git"
+  },
+  "author": "doblefilmina",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doblefilmina/Nuevo/issues"
+  },
+  "homepage": "https://github.com/doblefilmina/Nuevo#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  }
+}
