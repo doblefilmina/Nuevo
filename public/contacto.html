@@ -37,5 +37,27 @@
 			<input class="btn btn-primary" type="submit" value="Done!">
 
 		</form>
+
+		<script>
+			document.querySelector('form').addEventListener('submit', function(evento){    // document.querySelector('form').onsubmit = function() {...} (también podriamos haber usado esto)
+				evento.preventDefault()
+
+				const datos = new FormData(evento.target)
+
+				fetch(evento.target.action, {
+					method : evento.target.method,
+					body : datos,
+					headers : {
+                        "Content-Type" : "application/x-www-form-urlencoded"
+                    },  
+				}).then( rta => rta.json() ).then( data => {
+					if ( data.rta == 'ok') {
+						alert ('ENVIO EXITOSO!')
+					} else {
+						alert('FALLO EL ENVIO :(')
+					}
+				})
+			})  
+		</script>
 	</body>
 </html>
