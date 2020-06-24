@@ -2,9 +2,9 @@
   "name": "nuevo",
   "version": "0.0.1",
   "description": "Bases con Node.js",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "source .env && nodemon index.js"
   },
   "repository": {
     "type": "git",

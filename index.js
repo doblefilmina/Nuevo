@@ -23,11 +23,11 @@ const schemaContact = joi.object({
 
 // 1) crear la conexión con el servidor de email
 const miniOutlook = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
+    host: 'smtp.gmail.com',
+    port: 465,
     auth: {
-        user: 'ariel.williamson35@ethereal.email',
-        pass: 'mhWyEjsneAzk7bKVBb'
+        user: 'pruebascoding12345@gmail.com',
+        pass: process.env.EMAIL_PASS
     }
 });
 
@@ -59,8 +59,9 @@ server.post('/enviar', function (request, response) {
     miniOutlook.sendMail({
         from : datos.correo,
         to : "fede_brusa@hotmail.com",
+        replyTo : datos.correo ,
         subject : "consulta desde la oscuridad del servidor",
-        html : '<h1>Hola viteh!</h1>'
+        html : `<p>${datos.mensaje}</p>`
     }, function(error, info){
         const rta = error ? "su consulta no pudo ser enviada" : "gracias por su consulta"
         response.json({rta})
