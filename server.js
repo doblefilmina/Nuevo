@@ -99,6 +99,14 @@ server.put('/api/:id', async (req, res) => {          // api para actualizar con
 */
     res.json({ rta : 'ok'})
 }) 
-server.delete('/api', (req, res) => {       //api para eliminar los datos
-    res.json({ rta : 'Acá vas borrar productos'})
+server.delete('/api/:id', async (req, res) => {       //api para eliminar los datos
+    const ID = req.params.id
+
+    const productos = await DB.collection('Productos')
+
+    const query = { '_id' : ObjectId( ID ) }
+
+    const result = await productos.findOneAndDelete( query )
+    
+    res.json({ rta : 'result.ok'})
 }) 
