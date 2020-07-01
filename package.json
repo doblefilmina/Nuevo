@@ -4,7 +4,7 @@
   "description": "Bases con Node.js",
   "main": "server.js",
   "scripts": {
-    "start": "source .env && nodemon index.js"
+    "start": "nodemon -r dotenv/config server.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,9 @@
   "homepage": "https://github.com/doblefilmina/Nuevo#readme",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "mongodb": "^3.5.9",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.10",
     "nodemon": "^2.0.4"
