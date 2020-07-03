@@ -36,10 +36,19 @@ server.listen(3000)
 
 // Inicio de Rutas del Dashboard //
 server.get('/admin', (req, res) =>{
-    
-    res.render('agregar', {layout: false})
+
+    const productos = [{"_id":"5ef541d4ca97fcfffe753769","nombre":"5ef541d4ca97fcfffe753769","stock":"5","precio":"6900","disponible":"true","marca":"tu vieja"},{"_id":"5efbc65f6655a41144e74c03","nombre":"Jugo de Limon","stock":"999","precio":"99.99","marca":"Lemoncito"},{"_id":"5efbc7bc6655a41144e74c04","nombre":"Pan de queso","stock":"500","precio":"300","marca":"Quesolito"},{"_id":"5efe547bbceae77e54fcbad9","nombre":"leche","stock":"780","precio":"54","marca":"devaca","disponibilidad":"true"},{"_id":"5efe5d30814ab28cc096079d","nombre":"leche","stock":"780","precio":"54","marca":"devaca","disponibilidad":"true"},{"_id":"5efe5e6732662f5fe4d846f5","nombre":"caramelos","stock":"43","precio":"8","marca":"flin-paf","disponibilidad":"true","disponible":"true"},{"_id":"5efe5f19443dcd8c7475bf5e","nombre":"Lavarropas","stock":"5","precio":"6900","marca":"devaca","disponibilidad":"true","Marca":"florencia","disponible":"true"},{"_id":"5efe6b808d75c482303b8fc1","nombre":"iPhone X","stock":"500","precio":"699","asunto":"apple","detalle":"Modelo A6253 v4 64GB - LTE - Wifi 802.11n"}]
+        
+    res.render('listado', {productos})
 
 } )
+
+server.get('/admin/contacto', (req, res) =>{
+    
+    res.render('listado', {ACCION: 'productos'})
+
+} )
+
 
 // Fin de rutas del Dashboard //
 
