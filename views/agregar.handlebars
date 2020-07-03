@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>MercadoTECH - Gestor de Productos</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	</head>
+	<body class="container">
+		<h1>Nuevo Producto</h1>
+		<form action="http://localhost:3000/api" method="post">
+
+			<label for="nombre">Ingrese nombre:</label>
+			<input class="form-control" type="text" name="nombre" placeholder="Ej: jugo de uva">
+			
+			<br>
+
+			<label for="stock">Ingrese stock:</label>
+			<input class="form-control" type="number" name="stock" placeholder="Ej: 999">
+
+			<label for="precio">Ingrese precio:</label>
+			<input class="form-control" type="number" name="precio" placeholder="Ej: 1999.99">
+
+
+			<br>
+
+			<label for="marca">Elija marca:</label>
+			<select class="form-control" name="asunto">
+				<option value="apple">Apple</option>
+				<option value="samsung">Samsung</option>
+				<option value="google">Google</option>
+				<option value="lg">LG</option>
+			</select>
+
+			<br>
+
+			<label for="detalle">Ingrese un detalle:</label>
+			<textarea class="form-control" name="detalle" cols="30" rows="10" placeholder="Max: 100 caracteres"></textarea>
+
+			<br>
+
+			<input class="btn btn-primary" type="submit" value="Agregar">
+
+		</form>
+
+		<script>
+			document.querySelector('form').addEventListener('submit', async function(evento){    // document.querySelector('form').onsubmit = function() {...} (también podriamos haber usado esto)
+				evento.preventDefault()
+
+				const datos = Object.fromEntries(  new FormData(evento.target) )
+				//console.log(datos)
+
+				const configs = {  method : evento.target.method,
+					body : JSON.stringify(datos), //pasar de objetos a json
+					headers : {
+                        "Content-Type" : "application/json"
+					}
+				}
+
+				const request = await fetch(evento.target.action, config) 
+				const data = await request.json()
+				const message = data.rta==1 ? 'producto agregado correctamente :D' : "ERROR! El producto n pudo agregarse"
+				alert( message )
+			})
+		</script>
+	</body>
+</html>
