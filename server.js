@@ -53,6 +53,10 @@ server.get('/admin/nuevo', async (req, res) =>{
     res.end(`Aca vamos a ingresar un nuevo producto`)
 })
 
+server.get('/admin/ingresar', async (req, res) =>{
+    res.render('login', {layout: false})
+})
+
 // Fin de rutas del Dashboard //
 
 server.get('/api', async (req, res) => {      //api para obtener los datos
@@ -117,6 +121,21 @@ server.put('/api/:id', async (req, res) => {          // api para actualizar con
     const resultado = await productos.updateOne( query, update )
 
 
+    const verifyToken = (req, res, next) => {
+        const token = req.query.token   //verifica el token
+        console.log(token)
+
+        jwt.verify(token, process.env.JWT_PASSPHRASE, (error,data) => {
+            if (error) {
+                res.json({rta: "Acceso no autorizado"})
+            } else {
+                req.user = data.usuario
+                next()
+            }
+        })
+    }
+
+   
 
   /*  const encontrado = DB.find(item => item.id == datos.id)
     encontrado.stock = datos.stock
@@ -143,9 +162,9 @@ server.post('/login', (req, res) => {
 
     if( datos.email == 'pepito@gmail.com' && datos.clave == 'HolaDonPepito2020') {
         
-        const token = jwt.sign({})
+        const token = jwt.sign({ usuario : datos.email, expiresIn : 60}, process.env.JWt_PASSPHRASE)
         
-        res.json({ rta : 'Estas logeado' })
+        res.json({ rta : 'Estas logeado', token })
 
     } else  {
 
@@ -155,5 +174,5 @@ server.post('/login', (req, res) => {
 })
 
 server.get('/check', (req,res) => {
-
+    res.end(`Bienvenida/o $`)
 })
