@@ -22,6 +22,10 @@ const connectDB = async () =>{
 
 const port = process.env.PORT || 3000
 
+const base_url = (req) => {
+    return req.protocol + "://"+ req.hostname + ":"+ port    
+}
+
 server.use( json )
 server.use( urlencoded )
 server.use( cookies)
@@ -39,7 +43,7 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_PASSPHRASE, (error,data) => {
         if (error) {
-            res.redirect('http://localhost:3000/admin/ingresar')
+            res.redirect(base_url(req) + '/admin/ingresar')
         } else {
             req.user = data.usuario
             next()
@@ -49,35 +53,48 @@ const verifyToken = (req, res, next) => {
 
 
 // Inicio de Rutas del Dashboard //
-server.get('/admin', async (req, res) =>{
+server.get('/admin', verifyToken, async (req, res) =>{
     const DB = await connectDB()
 
     const productos = await DB.collection('Productos')
     const resultado = await productos.find({}).toArray()
 
-    res.render('main', { 
-        layout : false,
+    res.render('panel', { 
         items : resultado,
-        url : req.protocol + "://"+ req.hostname + ":"+ port // <-- http://localhost:3000
+        url : base_url(req) // <-- http://localhost:3000
     })
 
 })
 
 server.get('/admin/nuevo', verifyToken, async (req, res) =>{
-    const hansel = req.cookies._auth
-    res.write(`<p> El token de la cookie es: ${hansel}</p>`)
-    res.end(`Aca hay que agregar nuevo producto`)
+    res.render('formulario', {
+        url: base_url(req),
+        accion: 'Nuevo',
+        metodo: 'POST'
+    })
    
 })
 
 server.get('/admin/editar/:id', async (req, res) =>{
-    res.end(`Aca hay que editar el producto: ${req.params.id}`)
+    //OBTENER EL PRODCUCTO A EDITAR//
+    const ID = req.params.id
+    const DB = await connectDB()
+    const productos = await DB.collection('Productos')
+    const query = { '_id' : ObjectId(ID) }
+    const resultado = await productos.find( query ).toArray()
+    /////////////////////////
+    res.render('formulario', {
+        url: base_url(req),
+        accion: 'Actualizar',
+        metodo: 'PUT',
+        ...resultado[0]
+    })
 })
 
 
 
 server.get('/admin/ingresar', async (req, res) =>{
-    res.render('login', {layout: false})
+    res.render('login', {url: base_url(req)})
 })
 
 // Fin de rutas del Dashboard //
@@ -108,6 +125,7 @@ server.get('/api/:id' , async (req, res) =>{
 
 server.post('/api', async (req, res) => {     // api para crer con datos
     const datos = req.body
+    const DB = await connectDB()
     const productos = await DB.collection('Productos')
      
 /*
@@ -134,6 +152,8 @@ server.put('/api/:id', async (req, res) => {          // api para actualizar con
     const ID = req.params.id
     const datos = req.body
 
+    const DB = await connectDB()
+
     const productos = await DB.collection('Productos')
 
     const query = { '_id' : ObjectId( ID ) }
@@ -150,6 +170,8 @@ server.put('/api/:id', async (req, res) => {          // api para actualizar con
 
 server.delete('/api/:id', async (req, res) => {       //api para eliminar los datos
     const ID = req.params.id
+
+    const DB = await connectDB()
 
     const productos = await DB.collection('Productos')
 
@@ -178,14 +200,15 @@ server.post('/login', (req, res) => {
 
     if( datos.email == 'pepito@gmail.com' && datos.clave == 'HolaDonPepito2020') {
 
-        const vencimientoTimestamp = Date.now() + 60*1000*5     //dentro de 5 minutos (en milisegundos)
+        const duracion = 15      //<-- minutos
+        const vencimientoTimestamp = Date.now() + 60*1000*duracion     //dentro de 5 minutos (en milisegundos)
         const vencimientoFecha = new Date( vencimientoTimestamp ) 
         
-        const token = jwt.sign({ usuario : datos.email, expiresIn : 60}, process.env.JWt_PASSPHRASE)
+        const token = jwt.sign({ usuario : datos.email, expiresIn : (60*duracion)}, process.env.JWt_PASSPHRASE)
         
         res.cookie("_auth", token, { expires: vencimientoFecha, httpOnly: true , sameSite: "Strict", secure: false })
 
-        res.redirect('http://localhost:3000/admin')
+        res.redirect(base_url(req) + '/admin')
     } else  {
 
         res.json({ rta: 'datos incorrectos'})
