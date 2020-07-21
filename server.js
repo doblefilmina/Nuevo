@@ -54,6 +54,12 @@ const verifyToken = (req, res, next) => {
 
 // Inicio de Rutas del Dashboard //
 server.get('/admin', verifyToken, async (req, res) =>{
+
+    const msg = req.query.msg
+
+    const msgStyle = msg == "ok" ? "alert-success" : "alert-danger"
+    const msgText = msg == "ok" ? "Operación exitosa" : "La operación falló :("
+    
     const DB = await connectDB()
 
     const productos = await DB.collection('Productos')
@@ -61,7 +67,10 @@ server.get('/admin', verifyToken, async (req, res) =>{
 
     res.render('panel', { 
         items : resultado,
-        url : base_url(req) // <-- http://localhost:3000
+        url : base_url(req), // <-- http://localhost:3000
+        msg,                  //<-- = msg : msg  es lo mismo que escribir
+        msgStyle,
+        msgText
     })
 
 })
@@ -160,7 +169,7 @@ server.put('/api/:id', async (req, res) => {          // api para actualizar con
     
 
     const update = { 
-                    $set : {...datos }
+                    $set : { ...datos }
                     }
 
     const resultado = await productos.updateOne( query, update )

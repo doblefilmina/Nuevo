@@ -43,8 +43,8 @@
 				const configs = {
 					method : '{{metodo}}',
 					body : JSON.stringify(datos),
-					header : {
-						'Content-Type' : 'applicatio/json'
+					headers : {
+						'Content-Type' : 'application/json'
 					}
 				}
 			const request = await fetch( e.target.action , configs )

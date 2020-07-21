@@ -1,4 +1,11 @@
 
+        
+        {{#if msg}}
+        <div class="alert {{msgStyle}}" role="alert">
+          {{msgText}}
+        </div>
+        {{/if}}
+
         <a href="{{url}}/admin/nuevo" class="btn btn-success float-right my-3">Nuevo Producto</a>
         <!-- LISTADO DE PRODUCTOS -->
         <table class="table">
