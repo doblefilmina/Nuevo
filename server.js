@@ -4,6 +4,7 @@ const { MongoClient } = require('mongodb')
 const { ObjectId } = require('mongodb')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+const expressFileUpload = require('express-fileupload')
 const server = express()
 
 
@@ -11,6 +12,7 @@ const urlencoded = express.urlencoded({ extended : true })
 const json = express.json()
 const public = express.static(__dirname + '/public')
 const cookies = cookieParser()
+const fileUpload = expressFileUpload()
 
 const url = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}/${process.env.MONGODB_BASE}?retryWrites=true&w=majority`
 
@@ -34,12 +36,13 @@ server.engine( 'handlebars', hbs() )
 
 server.use('/', public)
 server.listen(port)
+server.use( fileUpload )
 
 /////////////JWT Test ///////////////
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies._auth   //verifica el token
-    console.log(token)
+
 
     jwt.verify(token, process.env.JWT_PASSPHRASE, (error,data) => {
         if (error) {
@@ -79,7 +82,8 @@ server.get('/admin/nuevo', verifyToken, async (req, res) =>{
     res.render('formulario', {
         url: base_url(req),
         accion: 'Nuevo',
-        metodo: 'POST'
+        metodo: 'POST',
+        _id : 'upload'
     })
    
 })
@@ -223,4 +227,32 @@ server.post('/login', (req, res) => {
         res.json({ rta: 'datos incorrectos'})
     }
 
+})
+
+/// ENDPOINT DE PRUEBA ///
+
+server.post("/api/upload", (req, res) => {
+
+    const imagen = req.files.imagen
+    const datos = req.body
+    
+    // C:\Users\EANT\Proyectos\EDD-BNJS-N-79\public\uploads\######.jpg
+    // /User/smessina/Proyectos/EANT/EDD-BNJS-N-79/public/uploads/####.jpg
+    // /home/user/Proyectos/EANT/EDD-BNJS-N-79/public/uploads/####.jpg
+    // /task/public/uploads/######.jpg
+
+    const path = __dirname + "/public/uploads/" + imagen.name
+
+    imagen.mv(path, error => {
+        if(error){
+            console.log("No se movio")
+            console.log(error)
+        }
+    })
+
+    console.log(`La imagen subida se llama: ${imagen.name}`)
+    console.log("Los datos subidos son:")
+    console.log( datos )
+
+    res.json({ rta : "mira la consola" })
 })

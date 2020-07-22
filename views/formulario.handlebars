@@ -26,32 +26,47 @@
 
 			<br>
 
+			
+
 			<label for="detalle">Ingrese un detalle:</label>
 			<textarea class="form-control" name="detalle" cols="30" rows="10" placeholder="Max: 100 caracteres">{{detalle}}</textarea>
 
 			<br>
 
+			<label for="imagen"> Elija una imagen</label>
+			<input type="file" class="form-control-file" id="imagen">
+
+			<br>
 			<input class="btn btn-primary" type="submit" value="Agregar">
+
+			
 
 		</form>
 
 		<script>
+/*
+			document.querySelector('input[type="file"]').onchange = async function(e){
+				const img = e.target.files
+				const datos = new FormData()
+				datos.append( 'imagen', img[0])
+				const request = await fetch('{{url}}/api/{{_id}}', {method : "POST", body : datos})
+				const response = await request.json()
+				console.log(response)
+			}
+*/
 			document.querySelector('form').onsubmit = async function(e){
 				e.preventDefault()
-				const datos = Object.fromEntries( new FormData(e.target) )
-
+				const datos = new FormData( e.target )
+				
 				const configs = {
-					method : '{{metodo}}',
-					body : JSON.stringify(datos),
-					headers : {
-						'Content-Type' : 'application/json'
-					}
-				}
-			const request = await fetch( e.target.action , configs )
-			const response = await request.json()
-			const message = response.rta ? 'ok' : 'fail'
-
-			window.location = '{{url}}/admin?msg=' + message
+			method : "{{metodo}}", {{!-- POST o PUT --}}
+			body : datos
+		}
+			const request = await fetch( e.target.action, configs )
+		const response = await request.json()
+		const message = response.rta ? "ok" : "fail"
+		window.location = "{{url}}/admin?msg=" + message
+	}
 			}
 		</script>
 	
